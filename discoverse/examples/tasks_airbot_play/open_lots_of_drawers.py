@@ -13,6 +13,7 @@ from discoverse.robots_env.airbot_play_base import AirbotPlayCfg
 from discoverse.utils import get_body_tmat, get_site_tmat, step_func, SimpleStateMachine
 from discoverse.task_base import AirbotPlayTaskBase, recoder_airbot_play, batch_encode_videos, copypy2
 from discoverse.task_base.airbot_task_base import PyavImageEncoder
+import time
 
 class SimNode(AirbotPlayTaskBase):
     def __init__(self, config: AirbotPlayCfg, args):
@@ -143,6 +144,9 @@ if __name__ == "__main__":
     drawers="drawer_"+str(args.drawers)+"_handle"
     move_speed = 0.75
     sim_node.reset()
+
+    init_time = time.time()
+
     while sim_node.running:
         if sim_node.reset_sig:
             sim_node.reset_sig = False
@@ -208,6 +212,7 @@ if __name__ == "__main__":
         action[6] = sim_node.target_control[6]
 
         obs, _, _, _, _ = sim_node.step(action)
+        obs["time"] += init_time
 
         if len(obs_lst) < sim_node.mj_data.time * cfg.render_set["fps"]:
             imgs = obs.pop('img')

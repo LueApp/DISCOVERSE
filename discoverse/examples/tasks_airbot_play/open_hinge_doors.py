@@ -141,6 +141,9 @@ if __name__ == "__main__":
     doors="hinge_door_"+str(args.doors)+"_handle"
     move_speed = 2.0
     sim_node.reset()
+
+    init_time = time.time()
+
     while sim_node.running:
         if sim_node.reset_sig:
             sim_node.reset_sig = False
@@ -247,6 +250,7 @@ if __name__ == "__main__":
         action[6] = sim_node.target_control[6]
 
         obs, _, _, _, _ = sim_node.step(action)
+        obs["time"] += init_time
 
         if len(obs_lst) < sim_node.mj_data.time * cfg.render_set["fps"]:
             imgs = obs.pop('img')
